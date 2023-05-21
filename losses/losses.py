@@ -66,13 +66,8 @@ class SICLoss(nn.Module):
         # L_B: Entropy loss
         entropy_loss = entropy(torch.mean(image_prob, 0), input_as_probabilities=True)
 
-<<<<<<< HEAD
         if epoch > 0:
             text_center = text_center.cuda()
-=======
-        if epoch > 5:
-            text_center = torch.tensor(text_center).cuda()
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
             text_prob = torch.mm(image_feature, text_center.T).softmax(dim=-1)
             _, pseudo_label = torch.max(text_prob, dim=1)
 

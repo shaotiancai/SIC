@@ -27,11 +27,7 @@ def sic_train(p, args, train_loader, text_loader, image_list,
 
     # Adjusted center-based mapping
     # Get image_centers \mathcal{V} from top xi_c confident samples, generate c representative semantic centers \mathcal{H}
-<<<<<<< HEAD
     image_centers, image_features = image_list
-=======
-    image_centers, image_features, targets = image_list
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     image_centers = cpt_center.get_centers(image_features, model, args)
     text_centers  = cpt_center.search_sim_texts(args, image_centers, text_loader, model)
 
@@ -53,11 +49,7 @@ def sic_train(p, args, train_loader, text_loader, image_list,
         total_loss, consistency_loss, entropy_loss, ce_loss = [], [], [], []
         for anchors_output_subhead, neighbors_output_subhead in zip(anchor_outputs, neighbor_outputs):
             total_loss_, consistency_loss_, entropy_loss_, ce_loss_ = criterion(anchors_output_subhead,
-<<<<<<< HEAD
                                                                                      neighbors_output_subhead, anchor_features, text_centers, epoch)
-=======
-                                                                                     neighbors_output_subhead, anchor_features, text_centers[0], epoch)
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
             total_loss.append(total_loss_)
             consistency_loss.append(consistency_loss_)
             entropy_loss.append(entropy_loss_)

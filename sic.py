@@ -1,9 +1,5 @@
 """
-<<<<<<< HEAD
 Forked from clustering (https://github.com/wvangansbeke/Unsupervised-Classification).
-=======
-Forked from SCAN (https://github.com/wvangansbeke/Unsupervised-Classification).
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 """
 
 import argparse
@@ -20,7 +16,6 @@ from utils.evaluate_utils import get_predictions, hungarian_evaluate, kmeans, si
 from utils.train_utils import sic_train
 from utils.utils import Logger, get_features_eval
 from datetime import datetime
-<<<<<<< HEAD
 from utils.get_flops import get_model_info
 from utils.utils import mkdir_if_missing
 
@@ -34,31 +29,12 @@ FLAGS.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
 FLAGS.add_argument('--gamma_u', type=float, default=0.05, help='gamma_u is a uniqueness score for constructing semantic space')
 FLAGS.add_argument('--gamma_r', type=int, default=500, help='gamma_r is a number for nearest nouns to each image center when constructing semantic space')
 FLAGS.add_argument('--xi_c', type=str, default=0.9, help='Top xi_c branch images for each class when computing image centers')
-=======
-import time
-import copy
-
-FLAGS = argparse.ArgumentParser(description='SIC Loss')
-FLAGS.add_argument('--config_env', default='configs/env.yml', help='Location of path config file')
-FLAGS.add_argument('--config_exp', default='configs/clustering/scan_cifar10.yml', help='Location of experiments config file')
-FLAGS.add_argument('--gpu', type=str, default='0')
-
-# The best hyper_parameters for cifar10 dataset, and others can found on table2 of SIC.
-FLAGS.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
-FLAGS.add_argument('--gamma_u', type=float, default=0.05, help='gamma_u is a uniqueness score for constructing semantic space')
-FLAGS.add_argument('--gamma_r', type=int, default=500, help='gamma_r is a number for nearest nouns to each image center when constructing semantic space')
-FLAGS.add_argument('--xi_c', type=str, default='0.9', help='Top xi_c branch images for each class when computing image centers')
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 FLAGS.add_argument('--xi_a', type=int, default=30, help='xi_a is a number for nearest texts to each image center in adjusted center-based mapping')
 FLAGS.add_argument('--topk', type=int, default=20, help='The number of nearest neighbors in image consistency learning')
 FLAGS.add_argument('--entropy_weight', type=float, default=5.0, help='The hyper-para(lambda) for the entropy_loss')
 FLAGS.add_argument('--ce_weight', type=float, default=0.1, help='The hyper-para(beta) for the ce_loss')
 
 FLAGS.add_argument('--center_init', action='store_true', help='Use the k-means centers to initialize the fc layer')
-<<<<<<< HEAD
-=======
-FLAGS.add_argument('--version', type=str, default='log', help='Record the version')
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 FLAGS.add_argument('--checkpoint', type=str, default='checkpoint.pth.tar')
 
 args = FLAGS.parse_args()
@@ -66,7 +42,6 @@ os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
 
 def main():
-<<<<<<< HEAD
     p = create_config(args.config_env, args.config_exp, args.topk, args.checkpoint)
     p['optimizer_image']['optimizer_kwargs']['lr'] = args.lr
 
@@ -74,22 +49,11 @@ def main():
     now = datetime.now().strftime('%Y%m%d_%H%M%S')
     logfile_name = os.path.join(p['clustering_dir'], 'loggers', now+'.log')
     mkdir_if_missing(os.path.dirname(logfile_name))
-=======
-    p = create_config(args.config_env, args.config_exp, args.topk, args.checkpoint, '')
-    p['optimizer_image']['optimizer_kwargs']['lr'] = args.lr
-
-    # Log
-    logfile_name = 'training.log'
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     sys.stdout = Logger(filename=logfile_name, stream=sys.stdout)
 
     # Model
     print(colored('Get model', 'blue'))
     model, preprocess = get_model(p)
-<<<<<<< HEAD
-=======
-    from get_flops import get_model_info
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     model = model.cuda()
     get_model_info(model, (224, 224), preprocess)
     model = torch.nn.DataParallel(model)
@@ -106,7 +70,6 @@ def main():
     print('Train samples %d - Val samples %d' %(len(train_dataset), len(val_dataset)))
 
     # Get image centers
-<<<<<<< HEAD
     if os.path.exists(os.path.join(p['clustering_dir'], 'kmeans_centers.pth')):
         image_centers, features = torch.load(os.path.join(p['clustering_dir'], 'kmeans_centers.pth'))
     else:
@@ -116,12 +79,6 @@ def main():
         image_centers = torch.from_numpy(image_centers).cuda()
         torch.save([image_centers, features], os.path.join(p['clustering_dir'], 'kmeans_centers.pth'))
     
-=======
-    dataloader = get_val_dataloader(p, train_dataset)
-    features, targets = get_features_eval(dataloader, model)
-    image_centers = kmeans(features, targets)
-    image_centers = torch.from_numpy(image_centers).cuda()
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
     # Image optimizer
     if p['update_cluster_head_only']:
@@ -146,7 +103,6 @@ def main():
     print(criterion)
 
     # Checkpoint
-<<<<<<< HEAD
     if  os.path.exists(p['clustering_checkpoint']):
         print(colored('Restart from checkpoint {}'.format(p['clustering_checkpoint']), 'blue'))
         checkpoint = torch.load(p['clustering_checkpoint'], map_location='cpu')
@@ -158,21 +114,6 @@ def main():
 
     else:
         print(colored('No checkpoint file at {}'.format(p['clustering_checkpoint']), 'blue'))
-=======
-    if False and os.path.exists(p['scan_checkpoint']):
-        print(colored('Restart from checkpoint {}'.format(p['scan_checkpoint']), 'blue'))
-        checkpoint = torch.load(p['scan_checkpoint'], map_location='cpu')
-        model.module.load_state_dict(checkpoint['model'])
-        image_optimizer.load_state_dict(checkpoint['image_optimizer'])
-        start_epoch = checkpoint['epoch']
-        best_loss = checkpoint['best_loss']
-        best_loss_head = checkpoint['best_loss_head']
-        best_acc = 0
-        best_clustering_stats = None
-
-    else:
-        print(colored('No checkpoint file at {}'.format(p['scan_checkpoint']), 'blue'))
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         start_epoch = 0
         best_acc = 0
         best_clustering_stats = None
@@ -201,23 +142,14 @@ def main():
 
         # Train
         print('Train ...')
-<<<<<<< HEAD
         sic_train(p, args, train_dataloader, text_dataloader, [image_centers, features],
-=======
-        sic_train(p, args, train_dataloader, text_dataloader, [image_centers, features, targets],
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
                                                 model, image_optimizer, criterion, cpt_center, epoch+1, p['update_cluster_head_only'])
 
         # Evaluate
         print('Make prediction on validation set ...')
         predictions = get_predictions(p, val_dataloader, model)
-<<<<<<< HEAD
         clustering_stats = sic_evaluate(predictions)
         lowest_loss_head = clustering_stats['lowest_loss_head']
-=======
-        scan_stats = sic_evaluate(predictions)
-        lowest_loss_head = scan_stats['lowest_loss_head']
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         print('Evaluate with hungarian matching algorithm ...')
         clustering_stats = hungarian_evaluate(lowest_loss_head, predictions, compute_confusion_matrix=False)
         print('mlp_predict', clustering_stats)
@@ -237,13 +169,8 @@ def main():
         # Checkpoint
         print('Checkpoint ...')
         torch.save({'image_optimizer': image_optimizer.state_dict(), 'model': model.module.state_dict(),
-<<<<<<< HEAD
                     'epoch': epoch + 1,  'best_acc': best_acc},
                      p['clustering_checkpoint'])
-=======
-                    'epoch': epoch + 1, 'best_loss': best_loss, 'best_loss_head': best_loss_head},
-                     p['scan_checkpoint'])
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
 
     print('best_clustering_stats:')

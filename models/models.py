@@ -18,29 +18,12 @@ class ClusteringModel(nn.Module):
         self.backbone_dim = 512
         self.nclusters = nclusters
         self.nheads = nheads
-<<<<<<< HEAD
-=======
-        self.text_encoder = TextEncoder(backbone)
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         self.prompt_learner = None
         self.cluster_head_i = nn.ModuleList([nn.Linear(self.backbone_dim, self.nclusters) for _ in range(self.nheads)])
 
 
     def forward(self, x, forward_pass='output_i'):
-<<<<<<< HEAD
         if forward_pass == 'output_i':
-=======
-        if forward_pass == 'output_i_ada2':
-            features = self.backbone.encode_image(x)
-            features = features.float()
-            out = [0.2 * image_adapter(features) + 0.8 * features for image_adapter in self.image_adapter]
-
-        elif forward_pass == 'output_i_ada':
-            features = self.backbone.encode_image(x)
-            features = features.float()
-            out = self.image_adapter(features)
-        elif forward_pass == 'output_i':
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
             features = self.backbone.encode_image(x)
             features = features.float()
             out = [cluster_head_i(features) for cluster_head_i in self.cluster_head_i]
@@ -52,23 +35,11 @@ class ClusteringModel(nn.Module):
         elif forward_pass == 'backbone_t':
             out = self.backbone.encode_text(x)
             out = out.float()
-<<<<<<< HEAD
-=======
-        elif forward_pass == 'backbone_t_h':
-            prompt = self.prompt_learner(x, type='oral')
-            tokenize_prompt = self.prompt_learner.tokenized_prompts[x]
-            out = self.text_encoder(prompt, tokenize_prompt)       # prompt, tokenized_prompt
-            out = out.float()
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         else:
             raise ValueError('Invalid forward pass {}'.format(forward_pass))
 
         return out
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 class TextEncoder(nn.Module):
     def __init__(self, clip_model):
         super().__init__()

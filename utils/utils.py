@@ -8,10 +8,7 @@ import errno
 import torch.nn as nn
 import sys
 import pandas as pd
-<<<<<<< HEAD
 import faiss
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
 
 class Logger(object):
@@ -124,23 +121,10 @@ def get_features_eval(val_loader, model):
     model.eval()
     targets, features, indices = [], [], []
     for i, batch in enumerate(val_loader):
-<<<<<<< HEAD
         input_ = batch['image'].cuda()
         target_ = batch['target'].cuda()
         index_ = batch['index']
         feature_ = model(input_, forward_pass='backbone_i')
-=======
-        if val_loader.dataset.filename == 'text':
-            input_, target_, index_ = batch
-            input_ = input_.cuda()
-            target_ = target_.cuda()
-            feature_ = model(input_, forward_pass='backbone_t')
-        else:
-            input_ = batch['image'].cuda()
-            target_ = batch['target'].cuda()
-            index_ = batch['index']
-            feature_ = model(input_, forward_pass='backbone_i')
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
         targets.append(target_)
         features.append(feature_.cpu())
@@ -162,7 +146,6 @@ def get_features_eval(val_loader, model):
 def get_wordnet_noun(filename):
     nouns_df = pd.read_csv(filename)
     nouns = np.array(nouns_df).flatten().tolist()
-<<<<<<< HEAD
     return nouns
 
 
@@ -188,6 +171,3 @@ def get_knn_indices(model, dataloader, topk):
     image_indices, image_accuracy = mine_nearest_neighbors(image_features.numpy(), image_targets.cpu().numpy(), topk)
 
     return image_indices, image_accuracy
-=======
-    return nouns
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9

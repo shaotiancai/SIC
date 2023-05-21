@@ -46,13 +46,8 @@ class ComputeCenter(nn.Module):
         similarity_text_index_top = torch.topk(similarity_image_texts, xi_a)
         ind = similarity_text_index_top.indices  # the indices of texts
         ind = ind.reshape(-1)
-<<<<<<< HEAD
         nearest_texts = text_loader.dataset.tensors[0][ind].cuda()
         text_features = model(nearest_texts, forward_pass='backbone_t')
-=======
-
-        text_features = model(text_loader.dataset.tensors[0][ind], forward_pass='backbone_t')
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         text_features = torch.cat([(torch.sum(text_features[i:i+xi_a], dim=0).unsqueeze(0))/xi_a   # Compute mean embeddings
                      for i in range(0, len(ind), xi_a)])
 
@@ -72,11 +67,7 @@ class ComputeCenter(nn.Module):
         image_outputs = torch.cat(image_outputs)
 
 
-<<<<<<< HEAD
         image_centers = self.get_image_centers(image_features, image_outputs, args.xi_c)
-=======
-        image_centers = self.get_image_centers(image_features, image_outputs, -1, args.xi_c)
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
         image_centers = image_centers.cuda()
         image_centers = normalize(image_centers, dim=1)
 

@@ -49,7 +49,7 @@ def get_model(p, pretrain_path=None):
     # Get backbone
     if p['backbone'] == 'ViT-B/32':
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        backbone, preprocess = clip.load("models/CLIP_new/clip/ViT-B-32.pt", device=device)  
+        backbone, preprocess = clip.load("models/clip/ViT-B-32.pt", device=device)  
                 
         """
         -- download link for clip pretrained model --
@@ -67,27 +67,13 @@ def get_model(p, pretrain_path=None):
         raise ValueError('Invalid backbone {}'.format(p['backbone']))
 
     # # Setup
-<<<<<<< HEAD
     from models.models import ClusteringModel
     model = ClusteringModel(backbone, p['num_classes'], p['num_heads'])
-=======
-    if p['setup'] in ['pretext', 'clustering', 'selflabel']:
-        from models.models import ClusteringModel
-        if p['setup'] == 'selflabel':
-            assert(p['num_heads'] == 1)
-        model = ClusteringModel(backbone, p['num_classes'], p['num_heads'])
-
-    else:
-        raise ValueError('Invalid setup {}'.format(p['setup']))
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
     return model, preprocess
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 def get_train_dataset(p, transform, to_augmented_dataset=False,
                         to_neighbors_dataset=False, split=None):
     # Base dataset
@@ -95,18 +81,14 @@ def get_train_dataset(p, transform, to_augmented_dataset=False,
         from data.cifar import CIFAR10
         dataset = CIFAR10(train=True, transform=transform, download=True)
 
-<<<<<<< HEAD
     elif p['train_db_name'] == 'cifar-20':
         from data.cifar import CIFAR20
         dataset = CIFAR20(train=True, transform=transform, download=True)
 
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     elif p['train_db_name'] == 'stl-10':
         from data.stl import STL10
         dataset = STL10(split=split, transform=transform, download=True)
 
-<<<<<<< HEAD
     elif p['train_db_name'] == 'imagenet':
         from data.imagenet import ImageNet
         dataset = ImageNet(split='train', transform=transform)
@@ -116,8 +98,6 @@ def get_train_dataset(p, transform, to_augmented_dataset=False,
         subset_file = './data/imagenet_subsets/%s.txt' %(p['train_db_name'])
         dataset = ImageNetSubset(subset_file=subset_file, split='train', transform=transform)
 
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     else:
         raise ValueError('Invalid train dataset {}'.format(p['train_db_name']))
 
@@ -140,18 +120,14 @@ def get_val_dataset(p, transform=None, to_neighbors_dataset=False):
         from data.cifar import CIFAR10
         dataset = CIFAR10(train=False, transform=transform, download=True)
 
-<<<<<<< HEAD
     elif p['val_db_name'] == 'cifar-20':
         from data.cifar import CIFAR20
         dataset = CIFAR20(train=False, transform=transform, download=True)
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
     elif p['val_db_name'] == 'stl-10':
         from data.stl import STL10
         dataset = STL10(split='test', transform=transform, download=True)
 
-<<<<<<< HEAD
     elif p['val_db_name'] == 'imagenet':
         from data.imagenet import ImageNet
         dataset = ImageNet(split='val', transform=transform)
@@ -160,8 +136,6 @@ def get_val_dataset(p, transform=None, to_neighbors_dataset=False):
         from data.imagenet import ImageNetSubset
         subset_file = './data/imagenet_subsets/%s.txt' %(p['val_db_name'])
         dataset = ImageNetSubset(subset_file=subset_file, split='val', transform=transform)
-=======
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
     else:
         raise ValueError('Invalid validation dataset {}'.format(p['val_db_name']))
@@ -195,11 +169,7 @@ def construct_semantic_space(p, image_centers, model, args):
     nouns_num = len(nouns)   # m
 
     # Semantic dataset \mathcal{T}
-<<<<<<< HEAD
     text_inputs = torch.cat([clip.tokenize(f"a photo of a {c}") for c in nouns])
-=======
-    text_inputs = torch.cat([model.tokenize(f"a photo of a {c}") for c in nouns])
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
 
     # Dataloader
     text_targets = torch.zeros(len(text_inputs))
@@ -209,11 +179,7 @@ def construct_semantic_space(p, image_centers, model, args):
     text_dataloader = get_val_dataloader(p, text_dataset)
 
     # Construct semantic space
-<<<<<<< HEAD
     target_list1 = image_centers_filter(model, text_dataloader, image_centers, args.gamma_r)  # image centers
-=======
-    target_list1 = image_centers_filter(model, text_dataloader, image_centers, gamma_r)  # image centers
->>>>>>> 7572dc5671b7a743af4c3aead34299d8b859cca9
     target_list2 = uniqueness_filter(model, text_dataloader, 1-args.gamma_u)   # uniqueness
     target_list = torch.from_numpy(np.intersect1d(target_list1.cpu().numpy(), target_list2.cpu().numpy())).cuda()
 
