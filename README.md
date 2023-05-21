@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Semantic-Enhanced Image Clustering (SIC)
 
 This is the code for the paper "Semantic-Enhanced Image Clustering" (AAAI 2023)
@@ -22,8 +21,12 @@ Save in the ''configs'' directory.
 
 ## Train && Test
 
-After setting the configuration, to start training, simply run
+After setting the configuration, to start training.
 
+firstly, run knn.py to get knn indices.
+> python knn.py --config_env  configs/env.yml --config_exp configs/clustering/scan_cifar10.yml
+
+then, run 
 > python sic.py --config_env  configs/env.yml --config_exp configs/clustering/scan_cifar10.yml
 
 
@@ -41,6 +44,4 @@ If you find SIC useful in your research, please consider citing:
   booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
 }
 ```
-=======
-# SIC
->>>>>>> 549251cfef12994e2651e050cecc822d50c9c21f
+
