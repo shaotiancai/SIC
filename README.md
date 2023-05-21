@@ -1,4 +1,4 @@
-# Semantic-Enhanced Image Clustering (SIC)
+# Semantic-Enhanced Image Clustering (SIC), updating...
 
 This is the code for the paper "Semantic-Enhanced Image Clustering" (AAAI 2023)
 
